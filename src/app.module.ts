@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
+import { ShortenerModule } from '@modules/shortener/shortener.module';
 import { dbConfig } from '@src/config';
 import { validate } from '@src/env.validation';
 
@@ -15,6 +16,8 @@ import { validate } from '@src/env.validation';
       useFactory: (config: ConfigService) => config.get('db'),
       inject: [ConfigService],
     }),
+
+    ShortenerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
