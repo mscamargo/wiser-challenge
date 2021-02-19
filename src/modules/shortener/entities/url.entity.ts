@@ -13,7 +13,4 @@ export class Url {
 
   @Column('timestamp')
   expiresAt: Date;
-
-  @Column({ default: 0 })
-  visitCount?: number;
 }
