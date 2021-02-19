@@ -67,8 +67,5 @@ export function validate(
     throw new Error(message);
   }
 
-  const validatedConfig = plainToClass(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
-  });
-  return validatedConfig;
+  return configInstance;
 }
