@@ -1,7 +1,8 @@
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { addSeconds } from 'date-fns';
 
 import {
   generateAlphanumericId,
@@ -21,15 +22,21 @@ export class ShortenerService {
   ) {}
 
   async shortenUrl({ url }: ShortenUrlDto): Promise<ShortenedUrlDto> {
+    const {
+      baseRedirectUrl,
+      shortUrlExpiresIn,
+    } = this.configService.get<AppConfig>('app');
+
     const idSize = generateRandomInt(5, 10);
     const shortId = generateAlphanumericId(idSize);
+
+    const expiresAt = addSeconds(new Date(), shortUrlExpiresIn);
 
     await this.urlsRepository.insert({
       url,
       shortId,
+      expiresAt,
     });
-
-    const { baseRedirectUrl } = this.configService.get<AppConfig>('app');
 
     const newUrl = `${baseRedirectUrl}/${shortId}`;
 

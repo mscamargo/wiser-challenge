@@ -2,7 +2,9 @@ import {
   IsBooleanString,
   IsEnum,
   IsNumberString,
+  IsOptional,
   IsString,
+  IsUrl,
   validateSync,
 } from 'class-validator';
 import { plainToClass } from 'class-transformer';
@@ -46,6 +48,14 @@ class EnvironmentVariables {
 
   @IsBooleanString()
   DB_SYNC: boolean;
+
+  @IsOptional()
+  @IsUrl()
+  BASE_REDIRECT_URL: string;
+
+  @IsOptional()
+  @IsNumberString()
+  SHORT_URL_EXPIRES_IN: number;
 }
 
 export function validate(
