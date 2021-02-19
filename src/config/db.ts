@@ -14,4 +14,5 @@ export default registerAs('db', () => ({
   entities: [],
   synchronize: env<boolean>('DB_SYNC', false, parseEnvToBool),
   autoLoadEntities: true,
+  ssl: env<boolean>('DB_USE_SSL', false, parseEnvToBool),
 }));
