@@ -1,7 +1,7 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { MoreThan, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { addSeconds } from 'date-fns';
 
 import {
@@ -43,5 +43,20 @@ export class ShortenerService {
     return {
       newUrl,
     };
+  }
+
+  async getRedirectUrl(shortId: string): Promise<Url> {
+    const url = await this.urlsRepository.findOne({
+      where: {
+        shortId,
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
+    if (!url) {
+      throw new NotFoundException();
+    }
+
+    return url;
   }
 }

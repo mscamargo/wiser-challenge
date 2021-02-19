@@ -2,6 +2,7 @@ jest.mock('date-fns', () => ({ addSeconds: jest.fn() }));
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
+import { NotFoundException } from '@nestjs/common';
 import { addSeconds } from 'date-fns';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -14,6 +15,7 @@ describe('ShortenerService', () => {
 
   const urlRepositoryMock = {
     insert: jest.fn(),
+    findOne: jest.fn(),
   };
 
   const baseRedirectUrl = 'http://shortener.io';
@@ -72,6 +74,36 @@ describe('ShortenerService', () => {
       });
       expect(configServiceMock.get).toBeCalledWith('app');
       expect(addSeconds).toBeCalled();
+    });
+  });
+  describe('getRedirectUrl', () => {
+    it('should return a url', async () => {
+      const shortId = 'abcd';
+
+      const urlMock = {
+        shortId,
+        url: 'originalUrl',
+        expiresAt: new Date(),
+      };
+
+      urlRepositoryMock.findOne.mockReturnValue(urlMock);
+
+      const result = await shortenerService.getRedirectUrl(shortId);
+
+      expect(result).toMatchObject(urlMock);
+      expect(urlRepositoryMock.findOne).toBeCalled();
+    });
+
+    it('should throw a not found exception', async () => {
+      const shortId = 'abcd';
+      const urlMock = null;
+
+      urlRepositoryMock.findOne.mockReturnValue(urlMock);
+
+      const result = shortenerService.getRedirectUrl(shortId);
+
+      await expect(result).rejects.toThrowError(NotFoundException);
+      expect(urlRepositoryMock.findOne).toBeCalled();
     });
   });
 });
