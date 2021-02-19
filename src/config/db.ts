@@ -13,4 +13,5 @@ export default registerAs('db', () => ({
   database: env<string>('DB_NAME', 'nest'),
   entities: [],
   synchronize: env<boolean>('DB_SYNC', false, parseEnvToBool),
+  autoLoadEntities: true,
 }));
